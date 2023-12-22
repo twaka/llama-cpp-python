@@ -1805,15 +1805,13 @@ class Llama:
                     )
                 )
                 tokens.append(token_str)
-                sorted_logprobs = list(
-                    sorted(
-                        zip(logprobs_token, range(len(logprobs_token))), reverse=True
-                    )
-                )
+                indices = np.argsort(-logprobs_token)
                 token_logprobs.append(logprobs_token[int(token)])
                 top_logprob: Optional[Dict[str, float]] = {
-                    self.detokenize([i]).decode("utf-8", errors="ignore"): logprob
-                    for logprob, i in sorted_logprobs[:logprobs]
+                    self.detokenize([i]).decode(
+                        "utf-8", errors="ignore"
+                    ): logprobs_token[i]
+                    for i in indices[:logprobs]
                 }
                 top_logprob.update({token_str: logprobs_token[int(token)]})
                 top_logprobs.append(top_logprob)
